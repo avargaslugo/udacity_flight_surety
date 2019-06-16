@@ -26,6 +26,11 @@ contract FlightSuretyApp {
 
     address private contractOwner;          // Account used to deploy contract
 
+    struct Airline {
+        bool isRegistered;
+        bool isFunded;
+    }
+
     struct Flight {
         bool isRegistered;
         uint8 statusCode;
@@ -33,6 +38,12 @@ contract FlightSuretyApp {
         address airline;
     }
     mapping(bytes32 => Flight) private flights;
+
+    // create operational boolean variable that states if contract is still being used
+    bool private operational = true;
+
+    // registered airlines
+    mapping(address => Airline) private airlines;
 
  
     /********************************************************************************************/
@@ -50,7 +61,7 @@ contract FlightSuretyApp {
     modifier requireIsOperational() 
     {
          // Modify to call data contract's status
-        require(true, "Contract is currently not operational");  
+        require(operational, "Contract is currently not operational");
         _;  // All modifiers require an "_" which indicates where the function body will be added
     }
 
@@ -71,12 +82,10 @@ contract FlightSuretyApp {
     * @dev Contract constructor
     *
     */
-    constructor
-                                (
-                                ) 
-                                public 
+    constructor(address _firstAirline) public
     {
         contractOwner = msg.sender;
+        airlines[_firstAirline] = Airline({isRegistered:true, isFunded:true});
     }
 
     /********************************************************************************************/
@@ -85,10 +94,10 @@ contract FlightSuretyApp {
 
     function isOperational() 
                             public 
-                            pure 
+                            view
                             returns(bool) 
     {
-        return true;  // Modify to call data contract's status
+        return operational;  // Modify to call data contract's status
     }
 
     /********************************************************************************************/
@@ -100,55 +109,38 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */   
-    function registerAirline
-                            (   
-                            )
-                            external
-                            pure
-                            returns(bool success, uint256 votes)
+    function registerAirline(address _airline) public requireIsOperational returns(bool success, uint256 votes)
     {
-        return (success, 0);
+        //require(airlines[msg.sender].isRegistered, "Only registered airlines can register a new airline");
+        // todo: add logic to check if airline can be registered
+        airlines[_airline] = Airline({isRegistered:true, isFunded:true});
+        return (true, 0);
     }
 
 
    /**
     * @dev Register a future flight for insuring.
     *
-    */  
-    function registerFlight
-                                (
-                                )
-                                external
-                                pure
-    {
 
-    }
+    //function registerFlight() external pure requireIsOperational
+    {
+        //todo: add logic
+    }*/
     
    /**
     * @dev Called after oracle has updated flight status
     *
-    */  
-    function processFlightStatus
-                                (
-                                    address airline,
-                                    string memory flight,
-                                    uint256 timestamp,
-                                    uint8 statusCode
-                                )
+    function processFlightStatus(address airline, string memory flight, uint256 timestamp, uint8 statusCode)
+                                requireIsOperational
                                 internal
                                 pure
     {
-    }
+        // todo: add logic
+    }*/
 
 
     // Generate a request for oracles to fetch flight information
-    function fetchFlightStatus
-                        (
-                            address airline,
-                            string flight,
-                            uint256 timestamp                            
-                        )
-                        external
+    function fetchFlightStatus(address airline, string flight, uint256 timestamp) requireIsOperational external
     {
         uint8 index = getRandomIndex(msg.sender);
 
@@ -160,7 +152,12 @@ contract FlightSuretyApp {
                                             });
 
         emit OracleRequest(index, airline, flight, timestamp);
-    } 
+    }
+    // todo: functionality emulating datacontract
+
+    function isAirline(address airline) external view returns (bool isRegistered){
+        return airlines[airline].isRegistered;
+    }
 
 
 // region ORACLE MANAGEMENT
@@ -270,7 +267,8 @@ contract FlightSuretyApp {
             emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
             // Handle flight status as appropriate
-            processFlightStatus(airline, flight, timestamp, statusCode);
+            //todo: uncomment for processFlightStatus
+            //processFlightStatus(airline, flight, timestamp, statusCode);
         }
     }
 
