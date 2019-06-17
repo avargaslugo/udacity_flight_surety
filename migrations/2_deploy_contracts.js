@@ -19,8 +19,9 @@ module.exports = function(deployer) {
                     };
 
                     accounts = await web3.eth.getAccounts();
-                    //let flightSuretyData = await FlightSuretyData.new();
-                    let flightSuretyApp = await FlightSuretyApp.new(firstAirline);
+                    // first deploy data contract with firstAirline
+                    let flightSuretyData = await FlightSuretyData.new();
+                    let flightSuretyApp = await FlightSuretyApp.new(flightSuretyData.address);
                     //await flightSuretyData.authorizeCaller(flightSuretyApp.address);
 
 

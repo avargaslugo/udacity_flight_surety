@@ -5,6 +5,7 @@ pragma solidity ^0.4.25;
 // More info: https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2018/november/smart-contract-insecurity-bad-arithmetic/
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "./FlightSuretyData.sol";
 
 /************************************************** */
 /* FlightSurety Smart Contract                      */
@@ -25,25 +26,11 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
     address private contractOwner;          // Account used to deploy contract
+    FlightSuretyData flightSuretyData;  // data contract functionality
 
-    struct Airline {
-        bool isRegistered;
-        bool isFunded;
-    }
-
-    struct Flight {
-        bool isRegistered;
-        uint8 statusCode;
-        uint256 updatedTimestamp;        
-        address airline;
-    }
-    mapping(bytes32 => Flight) private flights;
 
     // create operational boolean variable that states if contract is still being used
     bool private operational = true;
-
-    // registered airlines
-    mapping(address => Airline) private airlines;
 
  
     /********************************************************************************************/
@@ -82,10 +69,10 @@ contract FlightSuretyApp {
     * @dev Contract constructor
     *
     */
-    constructor(address _firstAirline) public
+    constructor(address _dataContract) public
     {
         contractOwner = msg.sender;
-        airlines[_firstAirline] = Airline({isRegistered:true, isFunded:true});
+        flightSuretyData = FlightSuretyData(_dataContract);
     }
 
     /********************************************************************************************/
@@ -109,13 +96,7 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */   
-    function registerAirline(address _airline) public requireIsOperational returns(bool success, uint256 votes)
-    {
-        //require(airlines[msg.sender].isRegistered, "Only registered airlines can register a new airline");
-        // todo: add logic to check if airline can be registered
-        airlines[_airline] = Airline({isRegistered:true, isFunded:true});
-        return (true, 0);
-    }
+
 
 
    /**
@@ -153,11 +134,8 @@ contract FlightSuretyApp {
 
         emit OracleRequest(index, airline, flight, timestamp);
     }
-    // todo: functionality emulating datacontract
 
-    function isAirline(address airline) external view returns (bool isRegistered){
-        return airlines[airline].isRegistered;
-    }
+
 
 
 // region ORACLE MANAGEMENT
@@ -332,4 +310,52 @@ contract FlightSuretyApp {
 
 // endregion
 
+    // encapsulation for data contract functionality
+    function setOperatingStatus(bool mode) external {
+        flightSuretyData.setOperatingStatus(mode);
+    }
+
+    function registerAirline(address airline) external {
+        flightSuretyData.registerAirline(airline);
+    }
+
+    //function fund(address airline) public payable {
+        //flightSuretyData.fund.value(msg.value)(airline);
+    //}
+
+    function isAirline(address airline) external view returns(bool){
+        return flightSuretyData.isAirline(airline);
+    }
+
+    function getNumberOfRegisteredAirlines() external view returns (uint256){
+        return flightSuretyData.getNumberOfRegisteredAirlines();
+    }
+    // todo: might not be necessary
+    //function getAirlineOwnership(address airline) external view returns(uint256){
+        //return flightSuretyData.getAirlineOwnership(airline);
+    //}
+
+    //function registerFlight(address airline, string flightId, uint256 timestamp) external {
+        //flightSuretyData.registerFlight(airline, flightId, timestamp);
+    //}
+
+    //function setTestingMode(bool mode) external {
+        //return flightSuretyData.setTestingMode(mode);
+    //}
+
+    //function buy(address passenger, string flight) external payable {
+        //flightSuretyData.buy.value(msg.value)(passenger, flight);
+    //}
+
+    //function flightSuretyInfo(string flight) external returns(uint256){
+        //return flightSuretyData.flightSuretyInfo(msg.sender, flight);
+    //}
+
+    //function creditInsurees(address passenger, string flight) external payable {
+        //flightSuretyData.creditInsurees(passenger, flight);
+
+    //}
+
 }   
+
+

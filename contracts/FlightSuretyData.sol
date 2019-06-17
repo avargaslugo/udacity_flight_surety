@@ -11,6 +11,27 @@ contract FlightSuretyData {
 
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
+    address [] multiCalls = new address[](0); // array of votes for multiple signature
+
+    struct Airline {
+        bool isRegistered;
+        bool isFunded;
+    }
+
+    struct Flight {
+        bool isRegistered;
+        uint8 statusCode;
+        uint256 updatedTimestamp;
+        address airline;
+    }
+    // registered files
+    mapping(bytes32 => Flight) private flights;
+    // registered airlines
+    mapping(address => Airline) private airlines;
+    // registered airlines
+    address[] registeredAirline = new address[](0);
+    uint256 numberOfRegisteredAirlines = 0;
+
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -24,6 +45,9 @@ contract FlightSuretyData {
     constructor() public
     {
         contractOwner = msg.sender;
+        airlines[contractOwner] = Airline({isRegistered:true, isFunded:true});
+        numberOfRegisteredAirlines += 1;
+
     }
 
     /********************************************************************************************/
@@ -76,12 +100,7 @@ contract FlightSuretyData {
     *
     * When operational mode is disabled, all write transactions except for this one will fail
     */    
-    function setOperatingStatus
-                            (
-                                bool mode
-                            ) 
-                            external
-                            requireContractOwner 
+    function setOperatingStatus(bool mode) external requireContractOwner
     {
         operational = mode;
     }
@@ -95,12 +114,44 @@ contract FlightSuretyData {
     *      Can only be called from FlightSuretyApp contract
     *
     */   
-    function registerAirline
-                            (   
-                            )
-                            external
-                            pure
+    function registerAirline(address _airline) public requireIsOperational returns(bool success, uint256 votes)
     {
+        //require(airlines[msg.sender].isRegistered, "Only registered airlines can register a new airline");
+        require(!airlines[_airline].isRegistered, "Airline already registered");
+        if(numberOfRegisteredAirlines < 4){
+            airlines[_airline] = Airline({isRegistered:true, isFunded:true});
+            numberOfRegisteredAirlines += 1;
+            return (true, 0);
+        }
+        else{
+            // emits a vote to add a new airline
+            bool isDuplicate = false;
+                for(uint c=0; c<multiCalls.length; c++) {
+                    if (multiCalls[c] == msg.sender) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+            // This warranties that the same caller cannot vote twice.
+            require(!isDuplicate, "Callers can only use this function once");
+            multiCalls.push(msg.sender); // adds sender vote
+
+            // checks if enough votes were emitted in order to accept the new airline
+            if (multiCalls.length >= numberOfRegisteredAirlines.div(2)) {
+                    airlines[_airline] = Airline({
+                        isRegistered: true,
+                        isFunded:true
+                    });
+                    // resets multiCalls array
+                    multiCalls = new address[](0);
+                    //emit RegisterAirline(airline);   // Log airline registration event
+
+                }
+
+
+        }
+
+
     }
 
 
@@ -176,6 +227,14 @@ contract FlightSuretyData {
                             payable 
     {
         fund();
+    }
+
+    function isAirline(address airline) external view returns (bool isRegistered){
+        return airlines[airline].isRegistered;
+    }
+
+    function getNumberOfRegisteredAirlines() external view returns (uint256) {
+        return numberOfRegisteredAirlines;
     }
 
 
