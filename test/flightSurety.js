@@ -26,34 +26,39 @@ contract('Flight Surety Tests', async (accounts) => {
 
         // Get operating status
         let registeredTrue = await config.flightSuretyApp.isAirline(config.owner);
-        let registeredFalse =  await config.flightSuretyApp.isAirline(config.testAddresses[2]);
+        let registeredFalse =  await config.flightSuretyApp.isAirline(accounts[2]);
+        let registeredFalse2 =  await config.flightSuretyApp.isAirline(accounts[3]);
+        let registeredFalse3 =  await config.flightSuretyApp.isAirline(accounts[4]);
+        let registeredFalse4 =  await config.flightSuretyApp.isAirline(accounts[10]);
+
         let numberOfRegistered = await config.flightSuretyApp.getNumberOfRegisteredAirlines();
         assert.equal(registeredTrue, true, "first airline was not registered correctly");
+
         assert.equal(registeredFalse, false, "for some reason and unwanted airline was registered during deployment");
+        assert.equal(registeredFalse2, false, "for some reason and unwanted airline was registered during deployment");
+        assert.equal(registeredFalse3, false, "for some reason and unwanted airline was registered during deployment");
+        assert.equal(registeredFalse4, false, "for some reason and unwanted airline was registered during deployment");
+
         assert.equal(numberOfRegistered, 1, "Registered airline counter was not increased");
 
 
     });
 
-    it(`(airline) Only existing airline may register a new airline until there are at least four airlines registered`, async function () {
+    it(`(airline) Only existing can register a new airline a new airline`, async function () {
 
-        let v = await config.flightSuretyApp.registerAirline(config.testAddresses[2], {from: config.firstAirline});
+        // check that sending address is a registered as expected
+        let registeredCheck = await config.flightSuretyApp.isAirline(config.owner);
+        assert.equal(registeredCheck, true, "sender airline is registered");
+        // registered airline adds a new airline to the registry
+        await config.flightSuretyApp.registerAirline(config.firstAirline, {from: config.owner});
+        // check that new airline is registered correctly
+        let registeredTrue = await config.flightSuretyApp.isAirline(config.firstAirline);
         let numberOfRegistered = await config.flightSuretyApp.getNumberOfRegisteredAirlines();
-        // address 4 tries to register account 3 as an airline
-        try{
-            await config.flightSuretyApp.registerAirline(config.testAddresses[3], {from: config.testAddresses[4]})
-        }
-        catch (e) {
-        }
 
-        let registeredTrue = await config.flightSuretyApp.isAirline(config.testAddresses[2]);
-        let registeredFalse =  await config.flightSuretyApp.isAirline(config.testAddresses[3]);
-
-        assert.equal(registeredTrue, true, "airline was not registered correctly");
-        assert.equal(registeredFalse, false, "an unregistered airline was able to register a new airline");
+        assert.equal(registeredTrue, true, "first airline was not registered");
         assert.equal(numberOfRegistered, 2, "Registered airline counter was not increased");
     });
-
+    /*
     it(`(multiparty) Only existing airline may register a new airline until there are at least four airlines registered`, async function () {
 
         let numberOfRegistered2 = await config.flightSuretyApp.getNumberOfRegisteredAirlines();
@@ -72,12 +77,12 @@ contract('Flight Surety Tests', async (accounts) => {
         assert.equal(numberOfRegistered5, 4, "number of registered airlines is not the expected one")
 
         // a second vote should register it
-        await config.flightSuretyApp.registerAirline(config.testAddresses[5], {from: config.testAddresses[3]});
+        await config.flightSuretyApp.registerAirline(config.testAddresses[5], {from: config.accounts[3]});
         //let numberOfRegistered5second = await config.flightSuretyApp.getNumberOfRegisteredAirlines();
         //assert.equal(numberOfRegistered5second, 5, "number of registered airlines is not the expected one")
 
 
-    });
+    }); */
 
 
 
