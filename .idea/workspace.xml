@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f425cb6-d64a-4e48-8ade-2558c06cdeab" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contracts/FlightSuretyApp.sol" beforeDir="false" afterPath="$PROJECT_DIR$/contracts/FlightSuretyApp.sol" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contracts/FlightSuretyData.sol" beforeDir="false" afterPath="$PROJECT_DIR$/contracts/FlightSuretyData.sol" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/flightSurety.js" beforeDir="false" afterPath="$PROJECT_DIR$/test/flightSurety.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +16,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/contracts/FlightSuretyApp.sol">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="318" column="36" selection-start-line="318" selection-start-column="36" selection-end-line="318" selection-end-column="36" />
+            <state relative-caret-position="280">
+              <caret line="318" column="101" selection-start-line="318" selection-start-column="101" selection-end-line="318" selection-end-column="101" />
             </state>
           </provider>
         </entry>
@@ -35,7 +34,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/testConfig.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
+            <state relative-caret-position="146">
               <caret line="19" column="6" lean-forward="true" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
             </state>
           </provider>
@@ -46,20 +45,20 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/flightSurety.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="50" column="73" selection-start-line="50" selection-start-column="73" selection-end-line="50" selection-end-column="73" />
+            <state relative-caret-position="255">
+              <caret line="53" column="26" lean-forward="true" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/contracts/FlightSuretyData.sol">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1144">
-              <caret line="31" column="6" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
+            <state relative-caret-position="210">
+              <caret line="117" column="5" selection-start-line="117" selection-start-column="5" selection-end-line="117" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -84,9 +83,9 @@
         <option value="$PROJECT_DIR$/truffle.js" />
         <option value="$PROJECT_DIR$/migrations/2_deploy_contracts.js" />
         <option value="$PROJECT_DIR$/config/testConfig.js" />
+        <option value="$PROJECT_DIR$/test/flightSurety.js" />
         <option value="$PROJECT_DIR$/contracts/FlightSuretyApp.sol" />
         <option value="$PROJECT_DIR$/contracts/FlightSuretyData.sol" />
-        <option value="$PROJECT_DIR$/test/flightSurety.js" />
       </list>
     </option>
   </component>
@@ -175,12 +174,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1559234821774</updated>
-      <workItem from="1559234828193" duration="38801000" />
+      <workItem from="1559234828193" duration="40379000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38801000" />
+    <option name="totallyTimeSpent" value="40379000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
@@ -257,29 +256,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/testConfig.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
+        <state relative-caret-position="146">
           <caret line="19" column="6" lean-forward="true" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/contracts/FlightSuretyApp.sol">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="318" column="36" selection-start-line="318" selection-start-column="36" selection-end-line="318" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/contracts/FlightSuretyData.sol">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1144">
-          <caret line="31" column="6" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/flightSurety.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="50" column="73" selection-start-line="50" selection-start-column="73" selection-end-line="50" selection-end-column="73" />
+        <state relative-caret-position="255">
+          <caret line="53" column="26" lean-forward="true" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contracts/FlightSuretyApp.sol">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="318" column="101" selection-start-line="318" selection-start-column="101" selection-end-line="318" selection-end-column="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contracts/FlightSuretyData.sol">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="117" column="5" selection-start-line="117" selection-start-column="5" selection-end-line="117" selection-end-column="5" />
         </state>
       </provider>
     </entry>

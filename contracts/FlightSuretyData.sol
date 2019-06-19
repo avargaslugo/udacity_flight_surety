@@ -116,8 +116,6 @@ contract FlightSuretyData {
     */   
     function registerAirline(address _airline) public requireIsOperational returns(bool success, uint256 votes)
     {
-        //todo: some how this requirement is true
-        require(airlines[msg.sender].isRegistered, "Only registered airlines can register a new airline");
         require(!airlines[_airline].isRegistered, "Airline already registered");
         if(numberOfRegisteredAirlines < 4){
             airlines[_airline] = Airline({isRegistered:true, isFunded:true});

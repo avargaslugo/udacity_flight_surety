@@ -316,6 +316,7 @@ contract FlightSuretyApp {
     }
 
     function registerAirline(address airline) external {
+        require(isAirline(msg.sender), "Only registered airlines can register new airlines or vote");
         flightSuretyData.registerAirline(airline);
     }
 
