@@ -11,11 +11,12 @@ contract FlightSuretyData {
 
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
-    address [] multiCalls = new address[](0); // array of votes for multiple signature
+    address[] multiCalls = new address[](0);
 
     struct Airline {
         bool isRegistered;
         bool isFunded;
+        uint256 funds;
     }
 
     struct Flight {
@@ -45,7 +46,7 @@ contract FlightSuretyData {
     constructor() public
     {
         contractOwner = msg.sender;
-        airlines[contractOwner] = Airline({isRegistered:true, isFunded:true});
+        airlines[contractOwner] = Airline({isRegistered:true, isFunded:false, funds:0});
         numberOfRegisteredAirlines += 1;
 
     }
@@ -74,6 +75,11 @@ contract FlightSuretyData {
     modifier requireContractOwner()
     {
         require(msg.sender == contractOwner, "Caller is not contract owner");
+        _;
+    }
+
+    modifier requireFunding(address airline){
+        require(airlines[airline].isFunded, "Airline needs to be funded to call this function");
         _;
     }
 
@@ -114,35 +120,35 @@ contract FlightSuretyData {
     *      Can only be called from FlightSuretyApp contract
     *
     */   
-    function registerAirline(address _airline) public requireIsOperational returns(bool success, uint256 votes)
+    function registerAirline(address _airline, address _registeringAirline) public requireIsOperational
+    requireFunding(_registeringAirline) returns(bool success, uint votes)
     {
         require(!airlines[_airline].isRegistered, "Airline already registered");
         if(numberOfRegisteredAirlines < 4){
-            airlines[_airline] = Airline({isRegistered:true, isFunded:true});
+            airlines[_airline] = Airline({isRegistered:true, isFunded:false, funds: 0});
             numberOfRegisteredAirlines += 1;
             return (true, 0);
         }
         else{
-            // emits a vote to add a new airline
+            // checks if sender has emitted a vote
             bool isDuplicate = false;
-                for(uint c=0; c<multiCalls.length; c++) {
-                    if (multiCalls[c] == msg.sender) {
+            for(uint c=0; c<multiCalls.length; c++) {
+                    if (multiCalls[c] == _registeringAirline) {
                         isDuplicate = true;
                         break;
                     }
                 }
-            // This warranties that the same caller cannot vote twice.
-            require(!isDuplicate, "Callers can only use this function once");
-            multiCalls.push(msg.sender); // adds sender vote
 
+            require(!isDuplicate, "Caller has already called this function.");
+            // if registering airline has not voted, the vote is added
+            multiCalls.push(_registeringAirline);
+            votes = multiCalls.length;
             // checks if enough votes were emitted in order to accept the new airline
-            if (multiCalls.length >= numberOfRegisteredAirlines.div(2)) {
-                    airlines[_airline] = Airline({
-                        isRegistered: true,
-                        isFunded:true
-                    });
+            if (votes >= numberOfRegisteredAirlines.div(2)) {
+                    airlines[_airline] = Airline({isRegistered: true, isFunded:false, funds:0});
                     // resets multiCalls array
                     multiCalls = new address[](0);
+                    numberOfRegisteredAirlines++;
                     //emit RegisterAirline(airline);   // Log airline registration event
 
                 }
@@ -196,13 +202,21 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */   
-    function fund
-                            (   
-                            )
-                            public
-                            payable
+    function fund(address airlineToFund) public payable requireIsOperational
     {
+        // airlineToFund is registered
+        require(airlines[airlineToFund].isRegistered, "Airline not registered");
+        if (!airlines[airlineToFund].isFunded){
+            require(msg.value >= 10, "First funding of an airline should be 10 ETH");
+        }
+
+        // current balance for target airline
+        uint256 currentFunding = airlines[airlineToFund].funds;
+        airlines[airlineToFund].funds = currentFunding.add(msg.value);
+        airlineToFund.transfer(msg.value);
+
     }
+
 
     function getFlightKey
                         (
@@ -220,21 +234,34 @@ contract FlightSuretyData {
     /**
     * @dev Fallback function for funding smart contract.
     *
-    */
-    function() 
-                            external 
-                            payable 
+    function() external payable
     {
         fund();
     }
+    */
 
-    function isAirline(address airline) external view returns (bool isRegistered){
+
+    function isAirline(address airline) external view returns (bool){
         return airlines[airline].isRegistered;
+    }
+
+    function fetchFunding(address airline) external view returns (uint256){
+        return airlines[airline].funds;
+    }
+
+    function isFunded(address airline) external view returns (bool){
+        return airlines[airline].isFunded;
     }
 
     function getNumberOfRegisteredAirlines() external view returns (uint256) {
         return numberOfRegisteredAirlines;
     }
+
+
+
+    // todo: add function for counting number of funded airlines
+
+
 
 
 }

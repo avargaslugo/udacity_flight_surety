@@ -61,6 +61,11 @@ contract FlightSuretyApp {
         _;
     }
 
+    modifier requireRegisteredAirline(){
+        require(flightSuretyData.isAirline(msg.sender), "This function can only be called by registered airlines");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
     /********************************************************************************************/
@@ -315,14 +320,13 @@ contract FlightSuretyApp {
         flightSuretyData.setOperatingStatus(mode);
     }
 
-    function registerAirline(address airline) external {
-        require(isAirline(msg.sender), "Only registered airlines can register new airlines or vote");
-        flightSuretyData.registerAirline(airline);
+    function registerAirline(address airline) external requireRegisteredAirline {
+        flightSuretyData.registerAirline(airline, msg.sender);
     }
 
-    //function fund(address airline) public payable {
-        //flightSuretyData.fund.value(msg.value)(airline);
-    //}
+    function fund(address airline) public payable {
+        flightSuretyData.fund.value(msg.value)(airline);
+    }
 
     function isAirline(address airline) external view returns(bool){
         return flightSuretyData.isAirline(airline);
@@ -330,6 +334,14 @@ contract FlightSuretyApp {
 
     function getNumberOfRegisteredAirlines() external view returns (uint256){
         return flightSuretyData.getNumberOfRegisteredAirlines();
+    }
+
+    function fetchFunding(address airline) external view returns (uint256){
+        return flightSuretyData.fetchFunding(airline);
+    }
+
+    function isFunded(address airline) external view returns (bool){
+        return flightSuretyData.isFunded(airline);
     }
     // todo: might not be necessary
     //function getAirlineOwnership(address airline) external view returns(uint256){
